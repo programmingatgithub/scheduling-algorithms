@@ -1,0 +1,57 @@
+//PRIORITY SCHEDULING
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+struct Process {
+    int id;
+    int priority;
+    int burstTime;
+    int arrivalTime;
+    int completionTime;
+    int turnaroundTime;
+    int waitingTime;
+};
+
+bool comparePriority(const Process &a, const Process &b) {
+    return a.priority < b.priority;
+}
+
+int main() {
+    int n = 5; 
+    std::vector<Process> processes(n);
+
+    // Input process details
+    for (int i = 0; i < n; ++i) {
+        std::cout << "Enter details for Process " << i + 1 << ":\n";
+        processes[i].id = i + 1;
+        std::cout << "Priority: ";
+        std::cin >> processes[i].priority;
+        std::cout << "Burst Time: ";
+        std::cin >> processes[i].burstTime;
+        std::cout << "Arrival Time: ";
+        std::cin >> processes[i].arrivalTime;
+    }
+
+    
+    std::sort(processes.begin(), processes.end(), comparePriority);
+
+    
+    int currentTime = 0;
+    for (int i = 0; i < n; ++i) {
+        currentTime = std::max(currentTime, processes[i].arrivalTime);
+        processes[i].completionTime = currentTime + processes[i].burstTime;
+        processes[i].turnaroundTime = processes[i].completionTime - processes[i].arrivalTime;
+        processes[i].waitingTime = processes[i].turnaroundTime - processes[i].burstTime;
+        currentTime = processes[i].completionTime;
+    }
+
+    
+    std::cout << "\nProcess ID\tPriority\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time\n";
+    for (int i = 0; i < n; ++i) {
+        std::cout << processes[i].id << "\t\t" << processes[i].priority << "\t\t" << processes[i].burstTime << "\t\t"
+                  << processes[i].completionTime << "\t\t" << processes[i].turnaroundTime << "\t\t" << processes[i].waitingTime << "\n";
+    }
+
+    return 0;
+}
